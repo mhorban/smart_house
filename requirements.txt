@@ -1,13 +1,3 @@
-sqlalchemy
-http://stackoverflow.com/questions/22353512/how-to-install-the-sqlalchemy-on-the-ubuntu
-http://stackoverflow.com/questions/10764408/python-ubuntu-install-for-sqlalchemy-not-working
-
-sqlalchemy howto
-http://pythoncentral.io/sqlalchemy-orm-examples/
-
-INSTALL:
-sudo apt-get install mysql-server mysql-client libmysqlclient15-dev python-mysqldb
-sudo wget http://peak.telecommunity.com/dist/ez_setup.py
-sudo python ez_setup.py
-sudo easy_install MySQL-Python
-sudo easy_install SQLAlchemy
+oslo.config>=2.7.0 # Apache-2.0
+oslo.log>=1.12.0 # Apache-2.0
+SQLAlchemy<1.1.0,>=0.9.9

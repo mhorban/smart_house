@@ -1,0 +1,4 @@
+git clone file:////home/mar/Dropbox/smart_house
+
+git config user.name Marian Horban
+git config user.email "horbanmarian@gmail.com"
