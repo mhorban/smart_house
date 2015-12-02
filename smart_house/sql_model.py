@@ -4,6 +4,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from oslo_config import cfg
+
+db_opts = [
+    cfg.StrOpt('db_connect_str',
+               default='mysql://smart:smart@localhost/smart_db',
+               help='Connection string used for sqlalchemy.create_engine.'),
+    ]
+
+cfg.CONF.register_opts(db_opts)
+
 Base = declarative_base()
 
 
@@ -41,8 +51,8 @@ class Rule(Base):
     action = Column(String, nullable=False)
 
 
-#engine = create_engine('sqlite:///orm_in_detail.sqlite')
-engine = create_engine('mysql://smart:smart@localhost/smart_db')
-session = sessionmaker()
-session.configure(bind=engine)
-Base.metadata.create_all(engine)
+def connect_DB():
+    engine = create_engine(cfg.CONF.db_connect_str)
+    session = sessionmaker()
+    session.configure(bind=engine)
+    Base.metadata.create_all(engine)
