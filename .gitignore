@@ -1,0 +1,4 @@
+*.pyc
+build/
+dist/
+smart_house.egg-info/
