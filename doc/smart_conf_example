@@ -1,0 +1,2 @@
+[default]
+db_connect_str=mysql://smart:smart@localhost/smart_db

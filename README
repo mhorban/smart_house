@@ -1,4 +1,4 @@
 Stupid House
 
 Run:
-python smart_house/start_smart.py --config-file /etc/smart.conf --log-file smart.log --log-dir /tmp
+./run_smart.py --config-file /etc/smart.conf --log-file smart.log --log-dir /tmp

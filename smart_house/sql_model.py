@@ -51,8 +51,12 @@ class Rule(Base):
     action = Column(String, nullable=False)
 
 
-def connect_DB():
+session = None
+
+
+def connect_db():
     engine = create_engine(cfg.CONF.db_connect_str)
+    global session
     session = sessionmaker()
     session.configure(bind=engine)
     Base.metadata.create_all(engine)
