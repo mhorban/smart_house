@@ -7,10 +7,11 @@ class PeriodicTask(object):
     Python periodic Thread using Timer with instant cancellation
     """
 
-    def __init__(self, callback=None, period=1, name=None, 
-                 stop_on_error=True,
-                 first_without_delay = True,
-                 *args, **kwargs):
+    def __init__(self, name=None,
+                 callback=None, args=(), kwargs={},
+                 period=1,
+                 stop_on_error=False,
+                 first_without_delay = True):
         self.name = name
         self.stop_on_error = stop_on_error
         self.first_iter_wo_delay = first_without_delay
