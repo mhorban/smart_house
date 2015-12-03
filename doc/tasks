@@ -12,4 +12,14 @@ each 1 year start 25.01.1987
 support periods:
 sec, min, hour, day, week, month, year
 
+each 1 day 5 times start 25.01.1987:00.00.00
+
+-------------------------------------------
+each N period - mean start now and continue forever
+each N period start XX.XX.XXXX - mean start XX.XX.XXXX do forever
+X times each N period start XX.XX.XXXX - mean X times start XX.XX.XXXX with period N
+X times each N period start XX.XX.XXXX end YY.YY.YYYY - mean X times start XX.XX.XXXX  end YY.YY.YYYY with period N
+once - mean now once
+once start XX.XX.XX
+
 
