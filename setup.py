@@ -11,7 +11,7 @@ setup(
     license = "Apache",
     keywords = "smart house",
     url = "http://packages.python.org/none",
-    packages=['smart_house', 'tests'],
+    packages=['smart_house'],
     long_description=open(os.path.join(os.path.dirname(__file__), 'README')).read(),
     classifiers=[
         "Development Status :: 1 - Alpha",
