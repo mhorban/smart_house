@@ -7,8 +7,9 @@ class PeriodicTask(object):
     Python periodic Thread using Timer with instant cancellation
     """
 
-    def __init__(self, name=None,
-                 callback=None, args=(), kwargs={},
+    def __init__(self,
+                 callback, args=(), kwargs={},
+                 name=None,
                  period=1,
                  stop_on_error=False,
                  first_without_delay = True):
@@ -33,18 +34,11 @@ class PeriodicTask(object):
 
     def run(self):
         """
-        By default run callback. Override it if you want to use inheritance
-        """
-        if self.callback is not None:
-            self.callback(*self.args, **self.kwargs)
-
-    def _run(self):
-        """
         Run desired callback and then reschedule Timer (if thread is not stopped)
         """
         error = False
         try:
-            self.run()
+            self.callback(*self.args, **self.kwargs)
         except Exception, e:
             error = True
             logging.exception("Exception in running periodic thread")
@@ -63,7 +57,7 @@ class PeriodicTask(object):
         if self.first_iter_wo_delay == True and self.first_iter == True:
             delay = 0
         self.first_iter = False
-        self.current_timer = threading.Timer(self.period, self._run)
+        self.current_timer = threading.Timer(self.period, self.run)
         if self.name:
             self.current_timer.name = self.name
         self.current_timer.start()
