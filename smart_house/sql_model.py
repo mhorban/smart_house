@@ -46,6 +46,7 @@ class HandlerDev(Base):
 class Rule(Base):
     __tablename__ = 'rule'
     id = Column(Integer, primary_key=True)
+    when = Column(String, nullable=False)
     cond = Column(String, nullable=False)
     action_type = Column(String, nullable=False)
     action = Column(String, nullable=False)

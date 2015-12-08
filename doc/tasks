@@ -2,7 +2,6 @@ Rules can operate with conditions:
 
 each 1 sec - uses periodic task;
 each 1 hour - uses calendar task.
-Calendar task is used if time > 1m
 
 each 1 day start 25.01.1987:00.00.00
 each 2 week start 25.01.1987
