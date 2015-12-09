@@ -98,12 +98,12 @@ class PeriodicTask(object):
         # 1. self.count_done > self.count
         # 2. now() > end_time
         # 3. now() > start_time + count * period
-        if self.count_done > self.count:
+        if self.count and self.count > 0 and self.count_done > self.count:
             return None
         now = datetime.datetime.now()
-        if self.count > 0:
+        if self.count and self.count > 0:
             finish_datetime = self.start_time + \
-                              datetime.timedelta(seconds=count*period)
+                datetime.timedelta(seconds=self.count*self.period)
             if now > finish_datetime:
                 return None
         if self.end_time and now > end_time:
@@ -119,7 +119,7 @@ class PeriodicTask(object):
                         self.period
         return self.start_time + datetime.timedelta(seconds=seconds_delta)
 
-    def cancel(self):
+    def stop(self):
         self.running = False
         self._cancel_sheduled_callback()
 
@@ -136,7 +136,7 @@ class PeriodicTask(object):
 class PeriodicTaskLoop(object):
     def __init__(self):
         self._action_ordered_list = []
-        self._thread = threading.Thread(self._loop)
+        self._thread = threading.Thread(target=self._loop)
 
     def start(self):
         self.running = True
@@ -149,7 +149,7 @@ class PeriodicTaskLoop(object):
         self._action_ordered_list.append((time_to_run, task))
         # TODO add some ordered type and not make full reorder each time
         self._action_ordered_list.sort(
-            cmp=lambda x, y: x[0].total_seconds() - y[0].total_seconds())
+            cmp=lambda x, y: int((x[0] - y[0]).total_seconds()))
     
     def cancel_task(self, cb):
         for task in list(self._action_ordered_list):
@@ -163,7 +163,8 @@ class PeriodicTaskLoop(object):
                 if task[0] > now:
                     break
                 callback = self._action_ordered_list.pop(0)[1]
-                callback()
+                t = threading.Thread(target=callback)
+                t.start()
             time.sleep(CONF.periodic_task_loop_delay)
             
         
