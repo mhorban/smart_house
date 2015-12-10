@@ -81,7 +81,8 @@ class PeriodicTask(object):
             self.callback(*self.args, **self.kwargs)
         except Exception, e:
             logging.exception("Exception in running periodic thread")
-        self.count_increase_cb(*count_increase_cb_args, **count_increase_cb_kwargs)
+        self.count_increase_cb(*self.count_increase_cb_args,
+                               **self.count_increase_cb_kwargs)
         self.count_done += 1
         self.time_of_last_call = datetime.datetime.now()
         if self.running:
@@ -98,7 +99,7 @@ class PeriodicTask(object):
         # 1. self.count_done > self.count
         # 2. now() > end_time
         # 3. now() > start_time + count * period
-        if self.count and self.count > 0 and self.count_done > self.count:
+        if self.count and self.count > 0 and self.count_done >= self.count:
             return None
         now = datetime.datetime.now()
         if self.count and self.count > 0:
@@ -120,8 +121,8 @@ class PeriodicTask(object):
         return self.start_time + datetime.timedelta(seconds=seconds_delta)
 
     def stop(self):
-        self.running = False
         self._cancel_sheduled_callback()
+        self._finish()
 
     def is_running(self):
         return self.running
@@ -130,7 +131,7 @@ class PeriodicTask(object):
         self.running = False
         if self.finish_cb:
             # finish_cb must delete rule from DB
-            self.finish_cb(*self.finish_cb, **self.finish_args)
+            self.finish_cb(*self.finish_args, **self.finish_kwargs)
             
             
 class PeriodicTaskLoop(object):

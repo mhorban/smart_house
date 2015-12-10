@@ -11,16 +11,120 @@ class TestPeriodicTask(unittest.TestCase):
         super(TestPeriodicTask, self).setUp()
 
     def test_callbacks(self):
+        callback = mock.MagicMock()
+        args = ('arg_1', 'arg_2')
+        kwargs = {'kwarg_1': 'kwarg_1', 'kwarg_2': 'kwarg_2'}
+        finish_cb = mock.MagicMock()
+        finish_args = ('finish_arg_1', 'finish_arg_2')
+        finish_kwargs = {'finish_kwarg_1': 'finish_kwarg_1',
+                         'finish_kwarg_2': 'finish_kwarg_2'}
+        count_increase_cb = mock.MagicMock()
+        count_increase_cb_args = ('increase_cb_arg_1', 'increase_cb_arg_2')
+        count_increase_cb_kwargs = {'increase_cb_kwarg_1': 'increase_cb_kwarg_1',
+                                    'increase_cb_kwarg_2': 'increase_cb_kwarg_2'}
 
-        loop = periodic_task.PeriodicTaskLoop()
-        pt = periodic_task.PeriodicTask(loop,
-                 datetime.datetime(year=2015, month=12, day=1),
-                 callback, args=(), kwargs={},
-                 finish_cb=callback, finish_args=(), finish_kwargs={},
-                 count_increase_cb=callback, count_increase_cb_args=(), count_increase_cb_kwargs={},
+        ptl = periodic_task.PeriodicTaskLoop()
+        pt = periodic_task.PeriodicTask(ptl,
+                 datetime.datetime.now() + datetime.timedelta(seconds=2),
+                 callback, args=args, kwargs=kwargs,
+                 finish_cb=finish_cb, finish_args=finish_args, finish_kwargs=finish_kwargs,
+                 count_increase_cb=count_increase_cb,
+                     count_increase_cb_args=count_increase_cb_args, 
+                     count_increase_cb_kwargs=count_increase_cb_kwargs,
                  name='test',
-                 count=2, count_done=1, period=5,
-                 end_time=datetime.datetime(year=2015, month=12, day=10))
+                 count=4, count_done=1, period=2,
+                 end_time=None)
+        pt.start()
+        ptl.start()
+        time.sleep(8)
+        ptl.stop()
+        self.assertEquals(callback.mock_calls, 
+                          [mock.call(*args, **kwargs),
+                           mock.call(*args, **kwargs),
+                           mock.call(*args, **kwargs)])
+        finish_cb.assert_called_once_with(*finish_args, **finish_kwargs)
+        self.assertEquals(count_increase_cb.mock_calls,
+                          [mock.call(*count_increase_cb_args,
+                                     **count_increase_cb_kwargs),
+                           mock.call(*count_increase_cb_args,
+                                     **count_increase_cb_kwargs),
+                           mock.call(*count_increase_cb_args,
+                                     **count_increase_cb_kwargs)])
+                          
+        
+    def test_callbacks_2(self):
+        callback = mock.MagicMock()
+        args = ('arg_1', 'arg_2')
+        kwargs = {'kwarg_1': 'kwarg_1', 'kwarg_2': 'kwarg_2'}
+        finish_cb = mock.MagicMock()
+        finish_args = ('finish_arg_1', 'finish_arg_2')
+        finish_kwargs = {'finish_kwarg_1': 'finish_kwarg_1',
+                         'finish_kwarg_2': 'finish_kwarg_2'}
+        count_increase_cb = mock.MagicMock()
+        count_increase_cb_args = ('increase_cb_arg_1', 'increase_cb_arg_2')
+        count_increase_cb_kwargs = {'increase_cb_kwarg_1': 'increase_cb_kwarg_1',
+                                    'increase_cb_kwarg_2': 'increase_cb_kwarg_2'}
+
+        ptl = periodic_task.PeriodicTaskLoop()
+        ptl.start()
+        pt = periodic_task.PeriodicTask(ptl,
+                 datetime.datetime.now() + datetime.timedelta(seconds=2),
+                 callback, args=args, kwargs=kwargs,
+                 finish_cb=finish_cb, finish_args=finish_args, finish_kwargs=finish_kwargs,
+                 count_increase_cb=count_increase_cb,
+                     count_increase_cb_args=count_increase_cb_args, 
+                     count_increase_cb_kwargs=count_increase_cb_kwargs,
+                 name='test',
+                 count=4, count_done=1, period=2,
+                 end_time=None)
+        pt.start()
+        time.sleep(8)
+        ptl.stop()
+        self.assertEquals(callback.mock_calls, 
+                          [mock.call(*args, **kwargs),
+                           mock.call(*args, **kwargs),
+                           mock.call(*args, **kwargs)])
+        finish_cb.assert_called_once_with(*finish_args, **finish_kwargs)
+        self.assertEquals(count_increase_cb.mock_calls,
+                          [mock.call(*count_increase_cb_args,
+                                     **count_increase_cb_kwargs),
+                           mock.call(*count_increase_cb_args,
+                                     **count_increase_cb_kwargs),
+                           mock.call(*count_increase_cb_args,
+                                     **count_increase_cb_kwargs)])
+
+    def test_cancel(self):
+        callback = mock.MagicMock()
+        args = ('arg_1', 'arg_2')
+        kwargs = {'kwarg_1': 'kwarg_1', 'kwarg_2': 'kwarg_2'}
+        finish_cb = mock.MagicMock()
+        finish_args = ('finish_arg_1', 'finish_arg_2')
+        finish_kwargs = {'finish_kwarg_1': 'finish_kwarg_1',
+                         'finish_kwarg_2': 'finish_kwarg_2'}
+        count_increase_cb = mock.MagicMock()
+        count_increase_cb_args = ('increase_cb_arg_1', 'increase_cb_arg_2')
+        count_increase_cb_kwargs = {'increase_cb_kwarg_1': 'increase_cb_kwarg_1',
+                                    'increase_cb_kwarg_2': 'increase_cb_kwarg_2'}
+
+        ptl = periodic_task.PeriodicTaskLoop()
+        ptl.start()
+        pt = periodic_task.PeriodicTask(ptl,
+                 datetime.datetime.now() + datetime.timedelta(seconds=2),
+                 callback, args=args, kwargs=kwargs,
+                 finish_cb=finish_cb, finish_args=finish_args, finish_kwargs=finish_kwargs,
+                 count_increase_cb=count_increase_cb,
+                     count_increase_cb_args=count_increase_cb_args, 
+                     count_increase_cb_kwargs=count_increase_cb_kwargs,
+                 name='test',
+                 count=4, count_done=1, period=2,
+                 end_time=None)
+        pt.start()
+        pt.stop()
+        time.sleep(8)
+        ptl.stop()
+        self.assertFalse(callback.called)
+        self.assertFalse(count_increase_cb.called)
+        finish_cb.assert_called_once_with(*finish_args, **finish_kwargs)
 
 
 class TestPeriodicTaskLoop(unittest.TestCase):
