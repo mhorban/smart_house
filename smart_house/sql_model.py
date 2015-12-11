@@ -46,8 +46,12 @@ class HandlerDev(Base):
 class Rule(Base):
     __tablename__ = 'rule'
     id = Column(Integer, primary_key=True)
-    when = Column(String, nullable=False)
-    cond = Column(String, nullable=False)
+    cond_when_start_time = Column(DateTime, default=func.now())
+    cond_when_end_time = Column(DateTime)
+    cond_when_tick_count = Column(Integer, default=-1)
+    cond_when_tick_count_done = Column(Integer, default=0)
+    cond_when_tick_period = Column(Integer, default=5)
+    cond_sql = Column(String, nullable=False)
     action_type = Column(String, nullable=False)
     action = Column(String, nullable=False)
 
