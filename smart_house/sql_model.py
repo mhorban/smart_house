@@ -40,7 +40,7 @@ class HandlerDev(Base):
     name = Column(String, nullable=False)
     type_ = Column(String, nullable=False)
     room = Column(String, nullable=False)
-    conn_str = Column(String)
+    conn_set_str = Column(String)
 
 
 class Rule(Base):
@@ -53,6 +53,7 @@ class Rule(Base):
     cond_when_tick_period = Column(Integer, default=5)
     cond_sql = Column(String, nullable=False)
     action_type = Column(String, nullable=False)
+    action_dev_id = Column(String, nullable=False)
     action = Column(String, nullable=False)
 
 

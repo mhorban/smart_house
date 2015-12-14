@@ -145,6 +145,9 @@ class PeriodicTaskLoop(object):
         
     def stop(self):
         self.running = False
+        
+    def join():
+        self._thread.join()
     
     def shedule_task(self, time_to_run, task):
         self._action_ordered_list.append((time_to_run, task))

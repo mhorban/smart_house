@@ -19,8 +19,8 @@ CONF.register_opts(opts)
 def parse_args(argv, default_config_files=None):
     logging.register_options(CONF)
     CONF(argv[1:],
-         project='smart',
-         version='smart 0.0.1',
+         project='smart_proj',
+         version='smart_ver 0.0.1',
          default_config_files=default_config_files)
 
 
@@ -29,12 +29,55 @@ def main():
     logging.setup(CONF, CONF.logger_name)
     log = logging.getLogger(__name__)
     log.info('Starting Smart')
+    log.error('debug Smart')
+    logging.setup(CONF, 'CONF.logger_name')
+    log.info('Starting Smart')
+    log.error('debug Smart')
 
     sql_model.connect_db()
+    
+    # initialize all devices from handler_dev table
+    
+    # initialize all sensors from sensor table
+    # 'active' sensors should start listen to incoming values
+    # if many sensors share same listen port - singleton sensor should be used
+    # this singleton should have mapping name_of_sensor TO sensor_id
+    # where name_of_sensor come with value from sensor and sensor.id from DB
+    
+    # apply all rules, run periodic_task_loop
+#    task_loop = PeriodicTaskLoop()
+    # Function apply_rules creates many PeriodicTasks using 
+    #      - 'when' conditions
+    #      - callbacks(callback, increment_tick_cb, finish_cb)
+    # Callback must check sql_condition using table sensor_values and
+    # if condition match DO action with device from handler_dev table
+    # Each rule will produce 3 callbacks.
+    # Callback functions will be generated with 
+    #     - standart SET function and
+    #     - arguments connected to SET func with functool.partial
+    #       arguments will have condition str to choose device: device.id=XXX
+    #       and VALUE which will be set with conn_set_str string
+    # apply_db_rules returns mapping rule_id TO PeriodicTask
+#    rule_id_2_periodic_task_map = apply_db_rules(task_loop)
+#    task_loop.start()
 
-    # apply all rules
-
-    # optionally start listen 'active' sensors
+    # optionally start listen 
+    
+    # run xml-rpc server thread to accept WEB server request 
+    # send map rule_id_2_periodic_task_map to controll existing rules
+    # and add new if needed.
+    # map rule_id_2_periodic_task_map must be synchronized with locker
+    # Basic XML-RPC server rules are:
+    # add_rule(action_str, **kwargs)
+    #    kwargs are fields from Rule table
+    # del_rule(id)
+    # get_all_rules()
+    # get_rule(id)
+    # update_rule(id, **rule_kwargs)
+    #     will stop PeriodicTask, update DB and apply_rule()
+#    run_xml_rpc_server(rule_id_2_periodic_task_map)
+    
+#    periodic_task_loop.join()
 
 
 if __name__ == "__main__":

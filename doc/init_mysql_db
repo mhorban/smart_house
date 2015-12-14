@@ -28,7 +28,7 @@ CREATE TABLE handler_dev (
 	name VARCHAR(50) NOT NULL, 
 	type VARCHAR(50) NOT NULL, 
 	room VARCHAR(50) NOT NULL, 
-	conn_str VARCHAR(500));
+	conn_set_str VARCHAR(500));
 
 CREATE TABLE rule (
 	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
@@ -39,4 +39,5 @@ CREATE TABLE rule (
 	cond_when_tick_period INT(6) DEFAULT 5,
 	cond_sql VARCHAR(1000) NOT NULL, 
 	action_type VARCHAR(50) NOT NULL, 
+	action_dev_id VARCHAR(50) NOT NULL, 
 	action VARCHAR(1000) NOT NULL);
