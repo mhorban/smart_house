@@ -1,9 +1,17 @@
 import sys
+import signal
+import functools
 
 from oslo_config import cfg
 from oslo_log import log as logging
 
 from smart_house import sql_model
+from smart_house import handler
+from smart_house import sensor
+from smart_house import periodic_task
+from smart_house import rule
+from smart_house import xmlrpc_server
+
 
 CONF = cfg.CONF
 
@@ -29,23 +37,21 @@ def main():
     logging.setup(CONF, CONF.logger_name)
     log = logging.getLogger(__name__)
     log.info('Starting Smart')
-    log.error('debug Smart')
-    logging.setup(CONF, 'CONF.logger_name')
-    log.info('Starting Smart')
-    log.error('debug Smart')
 
     sql_model.connect_db()
     
     # initialize all devices from handler_dev table
+    handler_devs = handler.init_handler_devs()
     
     # initialize all sensors from sensor table
     # 'active' sensors should start listen to incoming values
     # if many sensors share same listen port - singleton sensor should be used
     # this singleton should have mapping name_of_sensor TO sensor_id
     # where name_of_sensor come with value from sensor and sensor.id from DB
+    sensors = sensor.init_sensors()
     
     # apply all rules, run periodic_task_loop
-#    task_loop = PeriodicTaskLoop()
+    task_loop = periodic_task.PeriodicTaskLoop()
     # Function apply_rules creates many PeriodicTasks using 
     #      - 'when' conditions
     #      - callbacks(callback, increment_tick_cb, finish_cb)
@@ -58,8 +64,8 @@ def main():
     #       arguments will have condition str to choose device: device.id=XXX
     #       and VALUE which will be set with conn_set_str string
     # apply_db_rules returns mapping rule_id TO PeriodicTask
-#    rule_id_2_periodic_task_map = apply_db_rules(task_loop)
-#    task_loop.start()
+    rule_id_2_periodic_task_map = rule.apply_db_rules(task_loop)
+    task_loop.start()
 
     # optionally start listen 
     
@@ -75,9 +81,9 @@ def main():
     # get_rule(id)
     # update_rule(id, **rule_kwargs)
     #     will stop PeriodicTask, update DB and apply_rule()
-#    run_xml_rpc_server(rule_id_2_periodic_task_map)
+    xmlrpc_server.run_xml_rpc_server(rule_id_2_periodic_task_map)
     
-#    periodic_task_loop.join()
+    task_loop.join()
 
 
 if __name__ == "__main__":

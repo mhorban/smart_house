@@ -1,4 +1,4 @@
-sudo apt-get install mysql-server mysql-client libmysqlclient15-dev python-mysqldb
+sudo apt-get install mysql-server mysql-client python-mysqldb
 sudo wget http://peak.telecommunity.com/dist/ez_setup.py
 sudo python ez_setup.py
 sudo easy_install MySQL-Python
