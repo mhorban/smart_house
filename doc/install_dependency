@@ -3,3 +3,4 @@ sudo wget http://peak.telecommunity.com/dist/ez_setup.py
 sudo python ez_setup.py
 sudo easy_install MySQL-Python
 sudo easy_install SQLAlchemy
+sudo apt-get install python-tox

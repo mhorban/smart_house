@@ -64,7 +64,8 @@ def main():
     #       arguments will have condition str to choose device: device.id=XXX
     #       and VALUE which will be set with conn_set_str string
     # apply_db_rules returns mapping rule_id TO PeriodicTask
-    rule_id_2_periodic_task_map = rule.apply_db_rules(task_loop)
+    rule_id_2_periodic_task_map = rule.apply_db_rules(
+        task_loop, handler_devs, sensors)
     task_loop.start()
 
     # optionally start listen 
@@ -81,7 +82,8 @@ def main():
     # get_rule(id)
     # update_rule(id, **rule_kwargs)
     #     will stop PeriodicTask, update DB and apply_rule()
-    xmlrpc_server.run_xml_rpc_server(rule_id_2_periodic_task_map)
+    xmlrpc_server.run_xml_rpc_server(
+        rule_id_2_periodic_task_map, handler_devs, sensors)
     
     task_loop.join()
 

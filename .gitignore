@@ -4,6 +4,5 @@ dist/
 smart_house.egg-info/
 .idea/
 .test-requirements.txt.swp
-.testr.conf
 .testrepository/
 .tox/
