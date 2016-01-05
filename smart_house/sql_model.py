@@ -19,8 +19,7 @@ Base = declarative_base()
 
 class Sensor(Base):
     __tablename__ = 'sensor'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String, primary_key=True)
     type_ = Column(String, nullable=False)
     room = Column(String, nullable=False)
     conn_str = Column(String)
@@ -29,7 +28,7 @@ class Sensor(Base):
 class SensorValue(Base):
     __tablename__ = 'sensor_value'
     id = Column(Integer, primary_key=True)
-    sensor_id = Column(Integer, ForeignKey('sensor.id'))
+    sensor_name = Column(Integer, ForeignKey('sensor.name'))
     time_ = Column(DateTime, default=func.now())
     value = Column(String, nullable=False)
 

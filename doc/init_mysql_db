@@ -12,18 +12,17 @@ USE smart_db;
 mysql -h localhost -u smart -p smart_db
 
 CREATE TABLE sensor (
-	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
-	name VARCHAR(50) NOT NULL, 
+	name VARCHAR(50) PRIMARY KEY,
 	type_ VARCHAR(50) NOT NULL, 
 	room VARCHAR(50) NOT NULL, 
 	conn_str VARCHAR(500));
 
 CREATE TABLE sensor_value (
 	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
-	sensor_id INT(6) UNSIGNED NOT NULL, 
+	sensor_name VARCHAR(50) NOT NULL, 
 	time_ TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
 	value VARCHAR(1000) NOT NULL, 
-	FOREIGN KEY (sensor_id) REFERENCES sensor(id));
+	FOREIGN KEY (sensor_name) REFERENCES sensor(name));
 
 CREATE TABLE handler_dev (
 	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, 

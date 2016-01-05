@@ -48,6 +48,9 @@ def main():
     # if many sensors share same listen port - singleton sensor should be used
     # this singleton should have mapping name_of_sensor TO sensor_id
     # where name_of_sensor come with value from sensor and sensor.id from DB
+    #
+    # all device for controll are sensors. for example 
+    # controll button in web page is sensor too.
     sensors = sensor.init_sensors()
     
     # apply all rules, run periodic_task_loop
