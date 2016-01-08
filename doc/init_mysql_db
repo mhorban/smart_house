@@ -42,3 +42,4 @@ CREATE TABLE rule (
 	action_type VARCHAR(50) NOT NULL, 
 	action_dev_id VARCHAR(50) NOT NULL, 
 	action VARCHAR(1000) NOT NULL);
+	priority INT(6) DEFAULT 3;

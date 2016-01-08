@@ -54,6 +54,7 @@ class Rule(Base):
     action_type = Column(String, nullable=False)
     action_dev_id = Column(String, nullable=False)
     action = Column(String, nullable=False)
+    priority = Column(Integer, default=3);
 
 
 session = None

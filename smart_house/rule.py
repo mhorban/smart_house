@@ -1,6 +1,81 @@
+from smart_house import sql_model
+
+
+class FinishCallback(object):
+    """
+    usually removes exhausted rule from table and
+    removes 
+    """
+    def __init__(self, rule_id, rule_id_2_periodic_task_map):
+        self.rule_id = rule_id
+        self.rule_id_2_periodic_task_map = rule_id_2_periodic_task_map
+
+    def __call__(self):
+        pass
+
+
+class IncrementTickCallback(object):
+    """
+    increments field Rule.cond_when_tick_count_done by Rule.id
+    """
+    def __init__(self, rule_id):
+        self.rule_id = rule_id
+        
+    def __call__(self):
+        pass
+    
+    
+class DoCallback(object):
+    """
+    """
+    def __init__(self,
+                 cond_sql,
+                 action_type,
+                 action_dev_id,
+                 action,
+                 priority):
+        self.cond_sql = cond_sql
+        self.action_type = action_type
+        self.action_dev_id = action_dev_id
+        self.action = action
+        self.priority = priority
+        
+    def __call__(self):
+        pass
+    
 
 def apply_db_rules(task_loop, handler_devs, sensors):
     '''
     apply_db_rules returns mapping rule_id TO PeriodicTask
     '''
-    pass
+    # Function apply_rules creates many PeriodicTasks using 
+    #      - 'when' conditions
+    #      - callbacks(callback, increment_tick_cb, finish_cb)
+    # Callback must check sql_condition using table sensor_values and
+    # if condition match DO action with device from handler_dev table
+    # Each rule will produce 3 callbacks.
+    # Callback functions will be generated with 
+    #     - standart SET function and
+    #     - arguments connected to SET func with functool.partial
+    #       arguments will have condition str to choose device: device.id=XXX
+    #       and VALUE which will be set with conn_set_str string
+    # apply_db_rules returns mapping rule_id TO PeriodicTask
+    
+    rule_id_2_periodic_task_map = {}
+    db_session = sql_model.session()
+    rules = db_session.query(sql_model.Rule)
+    for rule in rules:
+        do_callback = DoCallback(rule.cond_sql,
+                                 rule.action_type,
+                                 rule.action_dev_id,
+                                 rule.action,
+                                 rule.priority,
+                                 handler_devs,
+                                 sensors)
+        increment_tick_cb = IncrementTickCallback(rule.id)
+        finish_cb = FinishCallback(rule.id, rule_id_2_periodic_task_map)
+        rule_id_2_periodic_task_map[rule.id] = \
+            PeriodicTask(do_callback,
+                         increment_tick_cb,
+                         finish_cb)
+        

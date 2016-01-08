@@ -46,7 +46,7 @@ def main():
     # initialize all sensors from sensor table
     # 'active' sensors should start listen to incoming values
     # if many sensors share same listen port - singleton sensor should be used
-    # this singleton should have mapping name_of_sensor TO sensor_id
+    # this singleton should have mapping name_of_sensor TO sensor_name
     # where name_of_sensor come with value from sensor and sensor.id from DB
     #
     # all device for controll are sensors. for example 
