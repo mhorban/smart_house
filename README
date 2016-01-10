@@ -1,4 +1,7 @@
 Stupid House
 
 Run:
-./run_smart.py --config-file /etc/smart.conf --log-file smart.log --log-dir /tmp
+./run_smart.py --config-file ./smart.conf
+
+Stop:
+kill -term $(ps aux | grep '[r]un_smart\.py' | awk "{print \$2}")

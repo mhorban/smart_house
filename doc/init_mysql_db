@@ -41,5 +41,10 @@ CREATE TABLE rule (
 	cond_sql VARCHAR(1000) NOT NULL, 
 	action_type VARCHAR(50) NOT NULL, 
 	action_dev_id VARCHAR(50) NOT NULL, 
-	action VARCHAR(1000) NOT NULL);
-	priority INT(6) DEFAULT 3;
+	action VARCHAR(1000) NOT NULL,
+	priority INT(6) DEFAULT 3);
+
+DROP TABLE rule;
+DROP TABLE handler_dev;
+DROP TABLE sensor_value;
+DROP TABLE sensor;

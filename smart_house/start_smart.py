@@ -85,10 +85,11 @@ def main():
     # get_rule(id)
     # update_rule(id, **rule_kwargs)
     #     will stop PeriodicTask, update DB and apply_rule()
-    xmlrpc_server.run_xml_rpc_server(
+    xmlrpc_loop = xmlrpc_server.run_xml_rpc_server(
         rule_id_2_periodic_task_map, handler_devs, sensors)
     
     task_loop.join()
+    xmlrpc_loop.join()
 
 
 if __name__ == "__main__":
