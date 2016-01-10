@@ -1,4 +1,8 @@
 
+class HandlerDev(object):
+    def execute(self, action_type, action, priority):
+        pass
+
 def init_handler_devs():
     '''
     return colection of dev

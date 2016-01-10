@@ -31,17 +31,22 @@ class DoCallback(object):
     def __init__(self,
                  cond_sql,
                  action_type,
-                 action_dev_id,
+                 handler_dev,
                  action,
-                 priority):
+                 priority,
+                 sensors):
         self.cond_sql = cond_sql
         self.action_type = action_type
-        self.action_dev_id = action_dev_id
+        self.handler_dev = handler_dev
         self.action = action
         self.priority = priority
+        self.sensors = sensors
         
     def __call__(self):
-        pass
+        if sql_model.check_sql_condition(self.cond_sql):
+            self.handler_dev.execute(self.action_type,
+                                     self.action,
+                                     self.priority)
     
 
 def apply_db_rules(task_loop, handler_devs, sensors):
@@ -65,17 +70,19 @@ def apply_db_rules(task_loop, handler_devs, sensors):
     db_session = sql_model.session()
     rules = db_session.query(sql_model.Rule)
     for rule in rules:
-        do_callback = DoCallback(rule.cond_sql,
-                                 rule.action_type,
-                                 rule.action_dev_id,
-                                 rule.action,
-                                 rule.priority,
-                                 handler_devs,
-                                 sensors)
-        increment_tick_cb = IncrementTickCallback(rule.id)
-        finish_cb = FinishCallback(rule.id, rule_id_2_periodic_task_map)
-        rule_id_2_periodic_task_map[rule.id] = \
-            PeriodicTask(do_callback,
-                         increment_tick_cb,
-                         finish_cb)
-        
+        apply_rule(rule_id_2_periodic_task_map,
+                   task_loop, handler_devs, sensors)
+
+
+def apply_rule(rule_id_2_periodic_task_map, task_loop, handler_devs, sensors):
+    do_callback = DoCallback(rule.cond_sql,
+                             rule.action_type,
+                             handler_devs[rule.action_dev_id],
+                             rule.action,
+                             rule.priority,
+                             sensors)#sensor maybe is redundant
+    increment_tick_cb = IncrementTickCallback(rule.id)
+    finish_cb = FinishCallback(rule.id, rule_id_2_periodic_task_map)
+    rule_id_2_periodic_task_map[rule.id] = PeriodicTask(do_callback,
+                                                        increment_tick_cb,
+                                                        finish_cb)

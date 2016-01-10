@@ -70,21 +70,11 @@ def main():
     rule_id_2_periodic_task_map = rule.apply_db_rules(
         task_loop, handler_devs, sensors)
     task_loop.start()
-
-    # optionally start listen 
     
     # run xml-rpc server thread to accept WEB server request 
     # send map rule_id_2_periodic_task_map to controll existing rules
     # and add new if needed.
     # map rule_id_2_periodic_task_map must be synchronized with locker
-    # Basic XML-RPC server rules are:
-    # add_rule(action_str, **kwargs)
-    #    kwargs are fields from Rule table
-    # del_rule(id)
-    # get_all_rules()
-    # get_rule(id)
-    # update_rule(id, **rule_kwargs)
-    #     will stop PeriodicTask, update DB and apply_rule()
     xmlrpc_loop = xmlrpc_server.run_xml_rpc_server(
         rule_id_2_periodic_task_map, handler_devs, sensors)
     
