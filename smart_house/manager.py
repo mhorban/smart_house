@@ -25,25 +25,25 @@ class Manager(object):
 
     def add_rule(self):
         LOG.info("add_rule")
-        raise NotImplemented()
+        raise NotImplementedError()
     
     def del_rule(self):
         LOG.info("add_rule")
-        raise NotImplemented()
+        raise NotImplementedError()
         
     def update_rule(self):
         '''
         will stop PeriodicTask, update DB and apply_rule()
         '''
         LOG.info("update_rule")
-        raise NotImplemented()
+        raise NotImplementedError()
         
     def get_rule(self):
         LOG.info("get_rule")
-        raise NotImplemented()
+        raise NotImplementedError()
         
     def get_all_rules(self):
         LOG.info("get_all_rules")
-        raise NotImplemented()
+        raise NotImplementedError()
     
     

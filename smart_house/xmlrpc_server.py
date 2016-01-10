@@ -45,6 +45,7 @@ def run_xml_rpc_server(rule_id_2_periodic_task_map,
              cfg.CONF.xml_rpc_server_port)
     server = SimpleXMLRPCServer(("localhost", cfg.CONF.xml_rpc_server_port),
                                 allow_none=True)
+    server.register_introspection_functions()
     api_manager = manager.Manager()
     for method in api_manager.public_methods:
         LOG.debug('Register XML-RPC method %s' % method)
