@@ -21,12 +21,12 @@ class TestSqlModel(unittest.TestCase):
     def test_Sensor(self):
         sensors = [sql_model.Sensor(
                     name='humidity_1',
-                    type_='Humidity_XXX',
+                    type_='fake-humidity',
                     room='small',
                     conn_str='http://192.168.10.10/value'),
                    sql_model.Sensor(
                     name='temperature_1',
-                    type_='Temperature_XXX',
+                    type_='fake-temp',
                     room='big',
                     conn_str='http://192.168.10.11/value'),
                    ]

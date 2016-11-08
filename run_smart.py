@@ -5,4 +5,7 @@ import sys
 from smart_house import start_smart
 
 if __name__ == "__main__":
-    sys.exit(start_smart.main())
+    try:
+        sys.exit(start_smart.main())
+    except Exception as ex:
+        print ex
