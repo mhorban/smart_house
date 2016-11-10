@@ -26,7 +26,8 @@ class Manager(object):
                       'del_rule',
                       'update_rule',
                       'get_rule',
-                      'get_all_rules']
+                      'get_all_rules',
+                      'exit']
 
     def add_rule(self):
         LOG.info("add_rule")
@@ -51,4 +52,6 @@ class Manager(object):
         LOG.info("get_all_rules")
         raise NotImplementedError()
     
-    
+    def exit(self):
+        LOG.info("exit")
+        raise NotImplementedError()

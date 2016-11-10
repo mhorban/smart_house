@@ -1,0 +1,15 @@
+Rule
+
+cond_sql definition
+
+can contain operators
+AND, OR, (), NOT
+>,>=,==,<,<=,()
+Priorities
+()
+* /
++ -
+< > <= >= ==
+NOT
+AND
+OR

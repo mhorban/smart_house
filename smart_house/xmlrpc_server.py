@@ -55,7 +55,6 @@ def run_xml_rpc_server(rule_id_2_periodic_task_map,
     for method in api_manager.public_methods:
         LOG.debug('Register XML-RPC method %s' % method)
         server.register_function(getattr(api_manager, method), method)
-    #xmlrpc_loop = threading.Thread(target=
-    server.serve_forever()#)
-    #xmlrpc_loop.start()
-    #return xmlrpc_loop
+    xmlrpc_loop = threading.Thread(target=server.serve_forever)
+    xmlrpc_loop.start()
+    return xmlrpc_loop
