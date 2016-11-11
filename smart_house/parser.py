@@ -47,7 +47,7 @@ class RuleParser(object):
             self.exprStack.append('unary -')
 
     def get_sensor_value(self, strg, loc, toks):
-        #get sensor value by sensor name toks[1]
+        #get sensor value by sensor name toks[0]
         print "get sensor value for ", toks[0]
         val = self.get_sensor_value_func(toks[0])
         return str(val)

@@ -76,7 +76,7 @@ class PeriodicTask(object):
     def _restart(self):
         time_to_run = self._calc_next_call()
         if time_to_run:
-            self._shedule_callback(time_to_run);
+            self._shedule_callback(time_to_run)
         else:
             self._finish()
 
@@ -93,7 +93,7 @@ class PeriodicTask(object):
             self._restart()
 
     def _shedule_callback(self, time_to_run):
-        self.periodic_task_loop.shedule_task(time_to_run, self._run)
+        self.periodic_task_loop.schedule_task(time_to_run, self._run)
         
     def _cancel_sheduled_callback(self):
         self.periodic_task_loop.cancel_task(self._run)
@@ -111,7 +111,7 @@ class PeriodicTask(object):
                 datetime.timedelta(seconds=self.count*self.period)
             if now > finish_datetime:
                 return None
-        if self.end_time and now > end_time:
+        if self.end_time and now > self.end_time:
             return None
         
         # if start_time in the future return it
@@ -153,7 +153,7 @@ class PeriodicTaskLoop(object):
     def join(self):
         self._thread.join()
     
-    def shedule_task(self, time_to_run, task):
+    def schedule_task(self, time_to_run, task):
         self._action_ordered_list.append((time_to_run, task))
         # TODO add some ordered type and not make full reorder each time
         self._action_ordered_list.sort(

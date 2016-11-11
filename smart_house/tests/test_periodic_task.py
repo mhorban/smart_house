@@ -162,8 +162,8 @@ class TestPeriodicTaskLoop(unittest.TestCase):
         ptl = periodic_task.PeriodicTaskLoop()
         dtime = [datetime.datetime(year=2015, month=12, day=1),
                  datetime.datetime(year=2015, month=12, day=2)]
-        ptl.shedule_task(dtime[1], cb1)
-        ptl.shedule_task(dtime[0], cb2)
+        ptl.schedule_task(dtime[1], cb1)
+        ptl.schedule_task(dtime[0], cb2)
         self.assertEqual(ptl._action_ordered_list[0][0], dtime[0])
         self.assertEqual(ptl._action_ordered_list[1][0], dtime[1])
         self.assertEqual(len(ptl._action_ordered_list), 2)
@@ -191,12 +191,12 @@ class TestPeriodicTaskLoop(unittest.TestCase):
         dtime3 = now + datetime.timedelta(seconds=3)
 
         ptl = periodic_task.PeriodicTaskLoop()
-        ptl.shedule_task(dtime2, cb2)
-        ptl.shedule_task(dtime4, cb4)
-        ptl.shedule_task(dtime3, cb3)
+        ptl.schedule_task(dtime2, cb2)
+        ptl.schedule_task(dtime4, cb4)
+        ptl.schedule_task(dtime3, cb3)
         ptl.start()
-        ptl.shedule_task(dtime3, cb3_after_start)
-        ptl.shedule_task(dtime4, cb4_after_start)
+        ptl.schedule_task(dtime3, cb3_after_start)
+        ptl.schedule_task(dtime4, cb4_after_start)
         time.sleep(1)
         ptl.cancel_task(cb4_after_start)
         time.sleep(5)

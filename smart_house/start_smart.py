@@ -55,7 +55,7 @@ def main():
     # where name_of_sensor come with value from sensor and sensor.id from DB
     #
     # all device for controll are sensors. for example 
-    # controll button in web page is sensor too.
+    # control button in web page is sensor too.
     sensors = sensor.init_sensors()
     
     # apply all rules, run periodic_task_loop

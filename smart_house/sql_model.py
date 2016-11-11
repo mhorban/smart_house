@@ -58,19 +58,22 @@ class Rule(Base):
     __tablename__ = 'rule'
     PRIORITIES = (
         ('high', 'High Priority'),
-        ('medium', 'Medium'),
-        ('low', 'Low'),
+        ('medium', 'Medium Priority'),
+        ('low', 'Low Priority'),
     )
     id = Column(Integer, primary_key=True)
+    name = Column(String(128))
     cond_when_start_time = Column(DateTime, default=func.now())
     cond_when_end_time = Column(DateTime)
     cond_when_tick_count = Column(Integer, default=-1)
     cond_when_tick_count_done = Column(Integer, default=0)
     cond_when_tick_period = Column(Integer, default=5)
     cond_sql = Column(String(16000), nullable=False)
+    # one device can have many functions like on/off lamp or so
+    # action_value can be used to increase lamp for 30%
     action_type = Column(String(256), nullable=False)
-    action_dev_id = Column(String(256), nullable=False)
-    action = Column(String(256), nullable=False)
+    action_value = Column(String(256), nullable=False)
+    handler_dev_name = Column(String(128), ForeignKey('handler_dev.name'))
     priority = Column(ChoiceType(PRIORITIES), default='medium')
 
 

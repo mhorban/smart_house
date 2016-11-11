@@ -4,6 +4,7 @@
 # Written by Marian Horban <m.horban@gmail.com>
 
 from smart_house import sql_model
+from periodic_task import PeriodicTask
 
 
 class FinishCallback(object):
@@ -75,11 +76,12 @@ def apply_db_rules(task_loop, handler_devs, sensors):
     db_session = sql_model.session()
     rules = db_session.query(sql_model.Rule)
     for rule in rules:
-        apply_rule(rule_id_2_periodic_task_map,
-                   task_loop, handler_devs, sensors)
+        apply_rule(task_loop, rule, rule_id_2_periodic_task_map,
+                   handler_devs, sensors)
 
 
-def apply_rule(rule_id_2_periodic_task_map, task_loop, handler_devs, sensors):
+def apply_rule(task_loop, rule, rule_id_2_periodic_task_map,
+               handler_devs, sensors):
     do_callback = DoCallback(rule.cond_sql,
                              rule.action_type,
                              handler_devs[rule.action_dev_id],
@@ -88,6 +90,25 @@ def apply_rule(rule_id_2_periodic_task_map, task_loop, handler_devs, sensors):
                              sensors)#sensor maybe is redundant
     increment_tick_cb = IncrementTickCallback(rule.id)
     finish_cb = FinishCallback(rule.id, rule_id_2_periodic_task_map)
-    rule_id_2_periodic_task_map[rule.id] = PeriodicTask(do_callback,
-                                                        increment_tick_cb,
-                                                        finish_cb)
+    do_callback_args = (
+        rule.cond_sql,
+        rule.action_type,
+        handler_dev,
+        action,
+        priority,
+        sensors
+    )
+    task = PeriodicTask(
+        task_loop,
+        rule.cond_when_start_time,
+        do_callback, args=do_callback_args,
+        finish_cb=finish_cb, finish_args=(rule.id, rule_id_2_periodic_task_map),
+        count_increase_cb=increment_tick_cb, count_increase_cb_args=(rule.id, ),
+        name=rule.name,
+        count=rule.cond_when_tick_count,
+        count_done=rule.cond_when_tick_count_done,
+        period=rule.cond_when_tick_period,
+        end_time=rule.cond_when_end_time
+    )
+    rule_id_2_periodic_task_map[rule.id] = task
+    task.start()
