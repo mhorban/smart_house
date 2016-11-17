@@ -5,3 +5,6 @@ Run:
 
 Stop:
 kill -term $(ps aux | grep '[r]un_smart\.py' | awk "{print \$2}")
+
+Run tests:
+python -m unittest discover -s ./smart_house/tests/

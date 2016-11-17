@@ -3,14 +3,17 @@
 # Proprietary and confidential
 # Written by Marian Horban <m.horban@gmail.com>
 
-from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, func
+from sqlalchemy import Column, DateTime, String, Integer, Boolean, ForeignKey, func
 from sqlalchemy_utils.types.choice import ChoiceType
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import sqlalchemy
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 from oslo_config import cfg
+
+from smart_house import exceptions
 
 db_opts = [
     cfg.StrOpt('db_connect_str',
@@ -38,9 +41,20 @@ class Sensor(Base):
 class SensorValue(Base):
     __tablename__ = 'sensor_value'
     id = Column(Integer, primary_key=True)
-    sensor_name = Column(String(128), ForeignKey('sensor.name'))
+    sensor_name = Column(String(128), ForeignKey('sensor.name',
+                                                 ondelete='CASCADE'))
     time_ = Column(DateTime, default=func.now())
     value = Column(String(1024), nullable=False)
+
+    @staticmethod
+    def get_by_name(sensor_name):
+        results = (session().
+                   query(SensorValue).
+                   filter_by(sensor_name=sensor_name).
+                   order_by(sqlalchemy.desc(SensorValue.time_)).all())
+        if not results.count():
+            raise exceptions.SensorValueNotAvailable(sensor_name)
+        return results[-1]
 
 
 class HandlerDev(Base):
@@ -73,8 +87,10 @@ class Rule(Base):
     # action_value can be used to increase lamp for 30%
     action_type = Column(String(256), nullable=False)
     action_value = Column(String(256), nullable=False)
-    handler_dev_name = Column(String(128), ForeignKey('handler_dev.name'))
+    handler_dev_name = Column(String(128),
+                              ForeignKey('handler_dev.name', ondelete='CASCADE'))
     priority = Column(ChoiceType(PRIORITIES), default='medium')
+    done = Column(Boolean, unique=False, default=False)
 
 
 session = None
@@ -83,6 +99,8 @@ session = None
 def connect_db(db_connect_str=cfg.CONF.db_connect_str):
     engine = create_engine(db_connect_str)
     global session
-    session = sessionmaker()
-    session.configure(bind=engine)
+    _session = sessionmaker(bind=engine)
+    #session.configure(bind=engine)
+    session = scoped_session(_session)
+    #Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)

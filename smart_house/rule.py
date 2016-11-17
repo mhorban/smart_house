@@ -4,20 +4,23 @@
 # Written by Marian Horban <m.horban@gmail.com>
 
 from smart_house import sql_model
-from periodic_task import PeriodicTask
+from smart_house.periodic_task import PeriodicTask
+from smart_house import parser
 
 
 class FinishCallback(object):
     """
-    usually removes exhausted rule from table and
-    removes 
+    usually mark as exhausted(done) rule in table Rule
     """
     def __init__(self, rule_id, rule_id_2_periodic_task_map):
         self.rule_id = rule_id
         self.rule_id_2_periodic_task_map = rule_id_2_periodic_task_map
 
     def __call__(self):
-        pass
+        db_session = sql_model.session()
+        db_session.query().filter(sql_model.Rule.id == self.rule_id).\
+            update({"done": True})
+        db_session.commit()
 
 
 class IncrementTickCallback(object):
@@ -26,9 +29,14 @@ class IncrementTickCallback(object):
     """
     def __init__(self, rule_id):
         self.rule_id = rule_id
-        
+
     def __call__(self):
-        pass
+        db_session = sql_model.session()
+        db_session.query().filter(sql_model.Rule.id == self.rule_id).\
+            update({
+                "cond_when_tick_count_done":
+                    (sql_model.Rule.cond_when_tick_count_done + 1)})
+        db_session.commit()
     
     
 class DoCallback(object):
@@ -37,23 +45,31 @@ class DoCallback(object):
     def __init__(self,
                  cond_sql,
                  action_type,
-                 handler_dev,
-                 action,
+                 action_value,
+                 handler_dev, # object
                  priority,
                  sensors):
         self.cond_sql = cond_sql
         self.action_type = action_type
+        self.action_value = action_value
         self.handler_dev = handler_dev
-        self.action = action
         self.priority = priority
         self.sensors = sensors
         
     def __call__(self):
-        if sql_model.check_sql_condition(self.cond_sql):
+        if check_sql_condition(self.cond_sql):
             self.handler_dev.execute(self.action_type,
-                                     self.action,
+                                     self.action_value,
                                      self.priority)
-    
+
+
+def check_sql_condition(cond_sql):
+    rule_parser = parser.RuleParser(sql_model.SensorValue.get_by_name)
+    val = rule_parser.compute(cond_sql)
+    if val is True:
+        return True
+    return False
+
 
 def apply_db_rules(task_loop, handler_devs, sensors):
     '''
@@ -76,8 +92,9 @@ def apply_db_rules(task_loop, handler_devs, sensors):
     db_session = sql_model.session()
     rules = db_session.query(sql_model.Rule)
     for rule in rules:
-        apply_rule(task_loop, rule, rule_id_2_periodic_task_map,
-                   handler_devs, sensors)
+        if rule.done is False:
+            apply_rule(task_loop, rule, rule_id_2_periodic_task_map,
+                       handler_devs, sensors)
 
 
 def apply_rule(task_loop, rule, rule_id_2_periodic_task_map,
@@ -93,9 +110,9 @@ def apply_rule(task_loop, rule, rule_id_2_periodic_task_map,
     do_callback_args = (
         rule.cond_sql,
         rule.action_type,
-        handler_dev,
-        action,
-        priority,
+        rule.action_value,
+        rule.handler_dev_name,
+        rule.priority,
         sensors
     )
     task = PeriodicTask(
